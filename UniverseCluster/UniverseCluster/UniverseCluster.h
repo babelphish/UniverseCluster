@@ -5,8 +5,10 @@
 #include <ctime>
 #endif
 
-typedef long long int64; typedef unsigned long long uint64;
-typedef vector<vector<long>> respondentGrid ;
+typedef unsigned long long bit_mask;
+typedef long long int64; 
+typedef unsigned long long uint64;
+typedef vector<vector<bit_mask>> respondentGrid ;
 typedef map<int,vector<Respondent>*> respondentListMap ;
 const unsigned int maxBits = 64;
 
