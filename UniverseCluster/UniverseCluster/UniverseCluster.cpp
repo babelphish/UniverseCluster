@@ -21,7 +21,7 @@ int _tmain(int argc, _TCHAR* argv[])
 {
 	ifstream file;
 
-	string dataFilePath = "C:\\Dev\\UniverseCluster\\data\\lars_full.csv";
+	string dataFilePath = "C:\\Dev\\UniverseCluster\\data\\lars_full_double.csv";
 	file.open(dataFilePath);
 	string respondentDataRow;
 	respondentGrid grid;
@@ -153,7 +153,10 @@ void solveProblems(const int maxDepth, const respondentGrid& grid, const respond
 	//find all eligible respondents
 	for (int x = 1; x <= maxDepth; x++)
 	{
-		eligibleRespondents.insert(eligibleRespondents.end(), problemMap.find(x)->second->begin(), problemMap.find(x)->second->end());
+		if (problemMap.count(x) > 0)
+		{
+			eligibleRespondents.insert(eligibleRespondents.end(), problemMap.find(x)->second->begin(), problemMap.find(x)->second->end());
+		}
 	}
 
 	long currentMask = 0;
@@ -162,7 +165,7 @@ void solveProblems(const int maxDepth, const respondentGrid& grid, const respond
 	maxMask = ~maxMask;
 
 	int position = 0;
-	int bestCount = 0;
+	int bestCount = 1;
 	vector<long> maskArray;
 	vector<long> positionArray;
 	int currentDepth = maxDepth;
@@ -182,7 +185,8 @@ void solveProblems(const int maxDepth, const respondentGrid& grid, const respond
 		}
 
 		int count = countMatchingRespondents(currentMask, eligibleRespondents);
-		if (count >= bestCount) {
+		if (count > bestCount) 
+		{
 			bestCount = count;
 			//cout << "Best set so far: " << formatMask(currentMask, numberOfProblems) << " with " << bestCount << endl;
 			//listMatchingRespondents(currentMask, eligibleRespondents);
