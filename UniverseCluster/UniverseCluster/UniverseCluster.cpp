@@ -30,8 +30,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	while (getline(file, respondentDataRow))
 	{
 		stringstream respondentDataRowStream(respondentDataRow);
-		vector<long> row;
-		long respondentDatum;
+		vector<bit_mask> row;
+		bit_mask respondentDatum;
 
 		int index = 0;
 		int problemCount = 0;
@@ -88,7 +88,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	}
 
 	int64 time1 = GetTimeMs64();
-	solveProblems(16, grid, problemMap);
+	solveProblems(10, grid, problemMap);
 	int64 time2 = GetTimeMs64();
 	cout << "Time: " <<  time2 - time1 << endl;
 	system ("pause");
@@ -96,25 +96,25 @@ int _tmain(int argc, _TCHAR* argv[])
 }
 
 
-string formatMask(const long mask, const int numberOfProblems) 
+string formatMask(const bit_mask mask, const int numberOfProblems) 
 {
 	bitset<maxBits> bitMask(mask);
 	string tempMask = bitMask.to_string();
 	return tempMask.substr(tempMask.size() - numberOfProblems, numberOfProblems);
 }
 
-bool compareWithMask(const long solution, const long respondentMask)
+bool compareWithMask(const bit_mask solution, const bit_mask respondentMask)
 {
 	//totalComparisons++;
-	long intermediateResult = solution ^ respondentMask;
-	long finalResult = intermediateResult & respondentMask;
+	bit_mask intermediateResult = solution ^ respondentMask;
+	bit_mask finalResult = intermediateResult & respondentMask;
 	return finalResult == 0;
 }
 
-void listMatchingRespondents(const long bitMask, const vector<Respondent>& eligibleRespondents) 
+void listMatchingRespondents(const bit_mask bitMask, const vector<Respondent>& eligibleRespondents) 
 {
 	int respondentCount = 0;
-	vector<long> matchingRespondents;
+	vector<bit_mask> matchingRespondents;
 	for (unsigned int i = 0; i < eligibleRespondents.size(); i++) 
 	{
 		if(compareWithMask(bitMask, eligibleRespondents[i].mask)) 
@@ -126,7 +126,7 @@ void listMatchingRespondents(const long bitMask, const vector<Respondent>& eligi
 	//cout << "Matched Respondents: " + matchingRespondents.size() << endl;
 }
 
-int countMatchingRespondents(const long bitMask, const vector<Respondent>& eligibleRespondents) 
+int countMatchingRespondents(const bit_mask bitMask, const vector<Respondent>& eligibleRespondents) 
 {
 	int respondentCount = 0;
 	for (unsigned int i = 0; i < eligibleRespondents.size(); i++) {
@@ -140,13 +140,15 @@ int countMatchingRespondents(const long bitMask, const vector<Respondent>& eligi
 
 void solveProblems(const int maxDepth, const respondentGrid& grid, const respondentListMap& problemMap)
 {
-	vector<long> masks;
+	vector<bit_mask> masks;
 	vector<Respondent> eligibleRespondents;
 	int numberOfProblems = grid[0].size() - 1;
 
 	//generate all the masks we'll be using
 	for (int x = 0; x < numberOfProblems; x++) {
-		masks.push_back(pow(2.0F,x));
+		bit_mask mask = powl(2.0L,x);
+		cout << formatMask(mask, numberOfProblems) << endl;
+		masks.push_back(mask);
 	}
 	masks.push_back(0);
 
@@ -159,14 +161,14 @@ void solveProblems(const int maxDepth, const respondentGrid& grid, const respond
 		}
 	}
 
-	long currentMask = 0;
+	bit_mask currentMask = 0;
 	//calculate the 'max mask' so we know when we're done looping
-	long maxMask = 0;
+	bit_mask maxMask = 0;
 	maxMask = ~maxMask;
 
 	int position = 0;
-	int bestCount = 1;
-	vector<long> maskArray;
+	int bestCount = 0;
+	vector<bit_mask> maskArray;
 	vector<long> positionArray;
 	int currentDepth = maxDepth;
 
@@ -188,7 +190,7 @@ void solveProblems(const int maxDepth, const respondentGrid& grid, const respond
 		if (count > bestCount) 
 		{
 			bestCount = count;
-			//cout << "Best set so far: " << formatMask(currentMask, numberOfProblems) << " with " << bestCount << endl;
+			cout << "Best set so far: " << formatMask(currentMask, numberOfProblems) << " with " << bestCount << endl;
 			//listMatchingRespondents(currentMask, eligibleRespondents);
 		}
 		if (currentDepth != maxDepth) {

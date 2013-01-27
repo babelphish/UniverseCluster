@@ -7,7 +7,7 @@ using namespace std;
 class Respondent
 {
 public:
-	long enty_id;
+	long long enty_id;
 	string strMask;
 	long mask;
 	int problemCount;
