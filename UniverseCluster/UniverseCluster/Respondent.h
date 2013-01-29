@@ -9,7 +9,7 @@ class Respondent
 public:
 	long enty_id;
 	string strMask;
-	long mask;
+	unsigned long long mask;
 	int problemCount;
 
 	Respondent(void);

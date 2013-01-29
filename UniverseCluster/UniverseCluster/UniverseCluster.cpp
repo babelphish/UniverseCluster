@@ -11,6 +11,7 @@
 #include <map>
 #include <bitset>
 #include <math.h>
+#include <intrin.h>
 
 #include "Respondent.h"
 #include "UniverseCluster.h"
@@ -62,7 +63,7 @@ int _tmain(int argc, _TCHAR* argv[])
 			if (respondentDataRowStream.peek() == ',')
 				respondentDataRowStream.ignore();
 		}
-		respondent.mask = strtol(binaryDataString.c_str(), NULL, 2);
+		respondent.mask = _strtoi64(binaryDataString.c_str(), NULL, 2);
 		respondent.strMask = binaryDataString;
 		respondent.problemCount = problemCount;
 		vector<Respondent>* problemCountRespondentList;
@@ -132,7 +133,7 @@ void solveProblems(const int maxDepth, const respondentGrid& grid, const respond
 
 	//generate all the masks we'll be using
 	for (int x = 0; x < numberOfProblems; x++) {
-		masks.push_back(pow(2.0F,x));
+		masks.push_back(powl(2.0F,x));
 	}
 	masks.push_back(0);
 
@@ -151,6 +152,7 @@ void solveProblems(const int maxDepth, const respondentGrid& grid, const respond
 	for (int i = 1; i <= maxDepth; i++)
 	{
 		maxMask = maxMask ^ bit_mask(pow(2.0F,(numberOfProblems - i)));
+		cout << formatMask(maxMask, numberOfProblems) << endl;
 	}
 
 	int position = 0;
@@ -166,14 +168,19 @@ void solveProblems(const int maxDepth, const respondentGrid& grid, const respond
 
 	bool done = false;
 			
-	currentMask = pow(2.0F,maxDepth) - 1;
+	currentMask = powl(2.0F,maxDepth) - 1;
+	unsigned long long iterator = 0;
+	cout << formatMask(maxMask, numberOfProblems) << endl;
+	cout << "count" << countMatchingRespondents(maxMask, eligibleRespondents) << endl;
+
 	while(currentMask != maxMask)
 	{
+		iterator++;
 		bit_mask t = currentMask | (currentMask - 1); // t gets v's least significant 0 bits set to 1
 		// Next set to 1 the most significant bit to change, 
 		// set to 0 the least significant ones, and add the necessary 1 bits.
 		unsigned long l;
-		_BitScanForward(&l,currentMask);
+		_BitScanForward64(&l,currentMask);
 		currentMask = ((t + 1) | ((~t & -~t) - 1) >> (l + 1));  
 
 		int count = countMatchingRespondents(currentMask, eligibleRespondents);
