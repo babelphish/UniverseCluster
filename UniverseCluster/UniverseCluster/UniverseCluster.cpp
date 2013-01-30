@@ -11,6 +11,7 @@
 #include <map>
 #include <bitset>
 #include <math.h>
+#include <stdlib.h>
 
 #include "Respondent.h"
 #include "UniverseCluster.h"
@@ -62,7 +63,7 @@ int _tmain(int argc, _TCHAR* argv[])
 			if (respondentDataRowStream.peek() == ',')
 				respondentDataRowStream.ignore();
 		}
-		respondent.mask = strtol(binaryDataString.c_str(), NULL, 2);
+		respondent.mask = _strtoi64(binaryDataString.c_str(), NULL, 2);
 		respondent.strMask = binaryDataString;
 		respondent.problemCount = problemCount;
 		vector<Respondent>* problemCountRespondentList;
