@@ -22,7 +22,7 @@ int _tmain(int argc, _TCHAR* argv[])
 {
 	ifstream file;
 
-	string dataFilePath = "C:\\Dev\\UniverseCluster\\data\\lars_full_double.csv";
+	string dataFilePath = "C:\\Users\\Fish\\Documents\\GitHub\\UniverseCluster\\data\\lars_full_double.csv";
 	file.open(dataFilePath);
 	string respondentDataRow;
 	respondentGrid grid;
