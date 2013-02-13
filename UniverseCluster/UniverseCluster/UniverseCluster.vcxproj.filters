@@ -35,11 +35,16 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="UniverseCluster.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Respondent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="UniverseCluster.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="ParallelUniverse.cu">
+      <Filter>Source Files</Filter>
+    </CudaCompile>
   </ItemGroup>
 </Project>

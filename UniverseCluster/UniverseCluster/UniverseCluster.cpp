@@ -3,21 +3,10 @@
 
 
 #include "stdafx.h"
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <vector>
-#include <sstream>
-#include <map>
-#include <bitset>
-#include <math.h>
-#include <intrin.h>
 
-#include "Respondent.h"
 #include "UniverseCluster.h"
 
-using namespace std;
-
+/*
 int _tmain(int argc, _TCHAR* argv[])
 {
 	ifstream file;
@@ -89,22 +78,66 @@ int _tmain(int argc, _TCHAR* argv[])
 	}
 
 	int64 time1 = GetTimeMs64();
-	solveProblems(10, grid, problemMap);
+	testIterator();
 	int64 time2 = GetTimeMs64();
 	cout << "Time: " <<  time2 - time1 << endl;
+
+	time1 = GetTimeMs64();
+	cout << calcBitCombosFact(10, 40) << endl;
+	time2 = GetTimeMs64();
+	cout << "Time: " <<  time2 - time1 << endl;
+
 	system ("pause");
 	return 0;
 }
+*/
+void testIterator()
+{
+	// calculate total 
+	cout << calcBitCombosFact(10,40) << endl;
+	for (unsigned int i = 1; i < 100; i++)
+	{
+		string position = formatMask(getNthSet(i, 10, 40), 40);
+		cout << position << endl;
+	}
+	//solveProblems(10, grid, problemMap);
+}
 
+/*
+const unsigned long long calcBitCombos(unsigned int number, unsigned int breadth)
+{
+	if (number > 2)
+	{
+		unsigned long long total = 0;
+		for (unsigned int i = 0; i <= breadth - number; i++)
+		{
+			total += calcBitCombos(number - 1, breadth - (i+1));
+		}
+		return total;
+	}
+	if (number == 2)
+	{
+		return ((breadth - 1) * breadth) / 2;
+	}
+	if (number == 1)
+	{
+		return breadth;
+	}
+	if (number == 0)
+	{
+		return 0;
+	}
+}
+*/
 
-string formatMask(const bit_mask mask, const int numberOfProblems) 
+string formatMask(bit_mask mask, int numberOfProblems) 
 {
 	bitset<maxBits> maskSet(mask);
 	string tempMask = maskSet.to_string();
 	return tempMask.substr(tempMask.size() - numberOfProblems, numberOfProblems);
 }
-
-bool compareWithMask(const bit_mask solution, const bit_mask respondentMask)
+/*
+bool compareWithMask(bit_mask solution, bit_mask respondentMask)
 {
 	//totalComparisons++;
 	bit_mask intermediateResult = solution ^ respondentMask;
@@ -112,8 +145,7 @@ bool compareWithMask(const bit_mask solution, const bit_mask respondentMask)
 	return finalResult == 0;
 }
 
-
-int countMatchingRespondents(const bit_mask mask, const vector<Respondent>& eligibleRespondents) 
+int countMatchingRespondents(bit_mask mask, vector<Respondent> const & eligibleRespondents) 
 {
 	int respondentCount = 0;
 	for (unsigned int i = 0; i < eligibleRespondents.size(); i++) {
@@ -123,7 +155,129 @@ int countMatchingRespondents(const bit_mask mask, const vector<Respondent>& elig
 	}
 	return respondentCount;
 }
+*/
+void incrementMask(bit_mask &currentMask)
+{
 
+	bit_mask t = currentMask | (currentMask - 1); // t gets v's least significant 0 bits set to 1
+	// Next set to 1 the most significant bit to change, 
+	// set to 0 the least significant ones, and add the necessary 1 bits.
+	unsigned long l;
+	_BitScanForward64(&l,currentMask);
+	currentMask = ((t + 1) | ((~t & -~t) - 1) >> (l + 1));
+}
+
+unsigned long long factorial(unsigned int number)
+{
+	if (number == 0 || number == 1)
+		return 1;
+
+	unsigned long long total = 1;
+
+	for(unsigned int i = number; i > 1; i--)
+	{
+		total *= i;
+	}
+
+	return total;
+}
+
+unsigned long long calcBitCombosFact(unsigned int numPicked, unsigned int numElements)
+{
+	unsigned long long total = 1;
+	for (unsigned int i = numElements; i > (numElements - numPicked); i--)
+	{
+		total *= i;
+	}
+
+	return total / factorial(numPicked);
+}
+
+void accumulatePositions(unsigned long long n, unsigned int numPicked, unsigned int numElements, vector<unsigned int>& positions)
+{
+	unsigned int testPicked = numPicked;
+	unsigned int testElements = numPicked;
+	unsigned long long totalCombinations = calcBitCombosFact(testPicked, testElements);
+	while (n > totalCombinations)
+	{
+		testElements++;
+		totalCombinations = calcBitCombosFact(testPicked, testElements);
+	}
+	if (n != totalCombinations)
+	{
+		unsigned long long newN = n - calcBitCombosFact(testPicked, testElements - 1);
+		positions.push_back(testElements);
+		testPicked--;
+		testElements--;
+		accumulatePositions(newN, testPicked, testElements, positions);
+	}
+	else
+	{
+		while(testPicked > 0)
+		{
+			positions.push_back(testElements);
+			testElements--;
+			testPicked--;
+		}
+	}
+}
+
+unsigned long long getNthSet(unsigned long long n, unsigned int numPicked, unsigned int numElements)
+{
+	if (n == 0)
+	{
+		return 0;
+	}
+	vector<unsigned int> positions;
+	accumulatePositions(n, numPicked, numElements, positions);
+
+	unsigned long long result = 0;
+	for (unsigned int i =0; i < positions.size(); i++) {
+		result |= (1LL << positions[i] - 1);
+	}
+
+	return result;
+}
+
+
+
+
+
+/*
+		function calcBitCombos(number, breadth, recurseBreadth)
+		{
+			if (number > recurseBreadth)
+			{
+				var total = 0;
+				for (var i = 0; i <= (breadth - number); i++)
+				{
+					total += calcBitCombos(number - 1, breadth - (i + 1), recurseBreadth);
+				}
+				return total;
+			}
+
+			if (number == 4)
+			{
+				return ((-6 * breadth) + (11 * Math.pow(breadth,2)) - (6 * Math.pow(breadth,3)) + (Math.pow(breadth,4))) / 24;
+			}
+			if (number == 3)
+			{
+				return ((2 * breadth) - (3 * Math.pow(breadth,2)) + (Math.pow(breadth,3))) / 6;
+			}
+			if (number == 2)
+			{
+				return (-(3 * breadth) + 3*Math.pow(breadth,2)) / 6
+			}
+			if (number == 1)
+			{
+				return breadth;
+			}
+			if (number == 0)
+			{
+				return 0;
+			}
+		}
+*/
 
 void solveProblems(const int maxDepth, const respondentGrid& grid, const respondentListMap& problemMap)
 {
@@ -152,8 +306,8 @@ void solveProblems(const int maxDepth, const respondentGrid& grid, const respond
 	for (int i = 1; i <= maxDepth; i++)
 	{
 		maxMask = maxMask ^ bit_mask(pow(2.0F,(numberOfProblems - i)));
-		cout << formatMask(maxMask, numberOfProblems) << endl;
 	}
+	incrementMask(maxMask);
 
 	int position = 0;
 	int bestCount = 1;
@@ -169,28 +323,27 @@ void solveProblems(const int maxDepth, const respondentGrid& grid, const respond
 	bool done = false;
 			
 	currentMask = powl(2.0F,maxDepth) - 1;
-	unsigned long long iterator = 0;
 	cout << formatMask(maxMask, numberOfProblems) << endl;
-	cout << "count" << countMatchingRespondents(maxMask, eligibleRespondents) << endl;
+//	cout << "count" << countMatchingRespondents(maxMask, eligibleRespondents) << endl;
 
 	while(currentMask != maxMask)
 	{
-		iterator++;
-		bit_mask t = currentMask | (currentMask - 1); // t gets v's least significant 0 bits set to 1
-		// Next set to 1 the most significant bit to change, 
-		// set to 0 the least significant ones, and add the necessary 1 bits.
-		unsigned long l;
-		_BitScanForward64(&l,currentMask);
-		currentMask = ((t + 1) | ((~t & -~t) - 1) >> (l + 1));  
-
-		int count = countMatchingRespondents(currentMask, eligibleRespondents);
+		int count;
+		//int count = countMatchingRespondents(currentMask, eligibleRespondents);
 		if (count > bestCount) 
 		{
 			bestCount = count;
 			cout << "Best set so far: " << formatMask(currentMask, numberOfProblems) << " with " << bestCount << endl;
 			//listMatchingRespondents(currentMask, eligibleRespondents);
 		}
-	}
+		
+		bit_mask t = currentMask | (currentMask - 1); // t gets v's least significant 0 bits set to 1
+		// Next set to 1 the most significant bit to change, 
+		// set to 0 the least significant ones, and add the necessary 1 bits.
+		unsigned long l;
+		_BitScanForward64(&l,currentMask);
+		currentMask = ((t + 1) | ((~t & -~t) - 1) >> (l + 1));  
+	}	
 }
 
 int64 GetTimeMs64()
