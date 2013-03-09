@@ -32,3 +32,4 @@ unsigned long long calcBitCombosFact(unsigned int numPicked, unsigned int numEle
 void testIterator();
 string formatMask(bit_mask mask, int numberOfProblems);
 void solveProblems(int maxDepth, const respondentGrid& grid, const respondentListMap& problemMap);
+void incrementMask(bit_mask &currentMask);

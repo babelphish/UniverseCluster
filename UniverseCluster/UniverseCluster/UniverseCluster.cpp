@@ -160,10 +160,13 @@ void incrementMask(bit_mask &currentMask)
 {
 
 	bit_mask t = currentMask | (currentMask - 1); // t gets v's least significant 0 bits set to 1
+	cout << t << endl;
 	// Next set to 1 the most significant bit to change, 
 	// set to 0 the least significant ones, and add the necessary 1 bits.
 	unsigned long l;
 	_BitScanForward64(&l,currentMask);
+	cout << l << endl;
+	cout << ((~t & -~t) - 1) << endl;
 	currentMask = ((t + 1) | ((~t & -~t) - 1) >> (l + 1));
 }
 
