@@ -5,3 +5,5 @@ Release/
 ipch/
 /UniverseCluster/*.opensdf
 /UniverseCluster/UniverseCluster.sdf
+
+*.pdb
